@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/RepEat2/static/css/main.f855e6bc.css",
+    "main.js": "/RepEat2/static/js/main.9e8c1967.js",
+    "static/js/488.af104311.chunk.js": "/RepEat2/static/js/488.af104311.chunk.js",
+    "index.html": "/RepEat2/index.html",
+    "main.f855e6bc.css.map": "/RepEat2/static/css/main.f855e6bc.css.map",
+    "main.9e8c1967.js.map": "/RepEat2/static/js/main.9e8c1967.js.map",
+    "488.af104311.chunk.js.map": "/RepEat2/static/js/488.af104311.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f855e6bc.css",
+    "static/js/main.9e8c1967.js"
+  ]
+}
