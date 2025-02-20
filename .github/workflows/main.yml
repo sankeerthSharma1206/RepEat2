@@ -1,0 +1,46 @@
+name: JSON Analyzer & Merger
+
+on:
+  push:
+    paths:
+      - "**.json"  # Trigger on any JSON file update
+
+jobs:
+  validate-and-merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the branch
+        uses: actions/checkout@v3
+
+      - name: Find updated JSON files
+        id: find-json
+        run: |
+          git fetch origin master
+          CHANGED_FILES=$(git diff --name-only origin/master -- '*.json')
+          echo "Updated JSON files: $CHANGED_FILES"
+          echo "json_files=$CHANGED_FILES" >> $GITHUB_ENV
+
+      - name: Validate JSON syntax
+        run: |
+          for file in ${{ env.json_files }}; do
+            if ! jq empty "$file"; then
+              echo "JSON validation failed for: $file"
+              exit 1
+            fi
+          done
+        shell: bash
+
+      - name: Merge valid JSON files to master
+        if: success()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git checkout master
+          git pull origin master
+          git checkout -
+          
+          git checkout master
+          git merge --no-ff -
+          git push origin master
