@@ -1,0 +1,43 @@
+name: JSON Analyzer & Merger
+
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - '**.json'
+
+jobs:
+  validate-and-merge:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v3
+
+      - name: Find updated JSON files
+        id: find-json
+        run: |
+          git fetch origin main
+          CHANGED_FILES=$(git diff --name-only origin/main -- '*.json')
+          echo "Updated JSON files: $CHANGED_FILES"
+          echo "json_files=$CHANGED_FILES" >> $GITHUB_ENV
+
+      - name: Validate JSON syntax
+        run: |
+          for file in ${{ env.json_files }}; do
+            if ! jq empty "$file"; then
+              echo "JSON validation failed for: $file"
+              exit 1
+            fi
+          done
+
+      - name: Merge valid JSON files to main
+        if: success()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout main
+          git pull origin main
+          git merge --no-ff -
+          git push origin main
